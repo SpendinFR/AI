@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass, field, asdict
-from typing import List, Dict, Any, Optional, Iterable, Tuple
+from typing import List, Dict, Any, Optional, Iterable, Tuple, TYPE_CHECKING
 import os, json, time, uuid, math
 
 from AGI_Evolutive.utils.jsonsafe import json_sanitize
@@ -9,7 +9,8 @@ from .adaptation import FeedbackTracker
 
 from .ontology import Ontology
 from .entity_linker import EntityLinker
-from .summarizer import BeliefSummarizer
+if TYPE_CHECKING:  # pragma: no cover
+    from .summarizer import BeliefSummarizer
 
 @dataclass
 class Evidence:
@@ -315,6 +316,8 @@ class BeliefGraph:
         feedback_path = os.path.join(os.path.dirname(self.path) or ".", "belief_feedback.json")
         self._feedback = FeedbackTracker(feedback_path)
         self._load()
+        from .summarizer import BeliefSummarizer
+
         self.summarizer = BeliefSummarizer(self)
         self._last_summary: Dict[str, Any] = {}
         self._last_summary_ts: float = 0.0
